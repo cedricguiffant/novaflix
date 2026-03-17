@@ -8,8 +8,8 @@ import { FiUser, FiMail, FiCalendar, FiShield, FiLogOut, FiEdit2 } from 'react-i
 import { HiOutlineFilm } from 'react-icons/hi'
 import Header from '@/components/Header'
 import Logo from '@/components/Logo'
-import { auth, logout } from '@/lib/firebase'
-import { onAuthStateChanged, type User } from 'firebase/auth'
+import { auth, logout, onAuthChange } from '@/lib/firebase'
+import type { User } from 'firebase/auth'
 
 /**
  * Page de profil utilisateur :
@@ -25,7 +25,7 @@ export default function ProfilePage() {
 
   // Redirige si non connecté
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
+    const unsub = onAuthChange((u) => {
       if (!u) {
         router.push('/login')
       } else {
