@@ -71,6 +71,7 @@ export const TMDB_IMAGE = {
 
 // ── IDs des genres TMDB ──
 export const GENRE_IDS = {
+  // Films
   ACTION:        28,
   ADVENTURE:     12,
   ANIMATION:     16,
@@ -83,6 +84,27 @@ export const GENRE_IDS = {
   ROMANCE:       10749,
   SCIFI:         878,
   THRILLER:      53,
+}
+
+// ── IDs des genres TV ──
+export const TV_GENRE_IDS = {
+  ACTION_ADVENTURE: 10759,
+  ANIMATION:        16,
+  COMEDY:           35,
+  CRIME:            80,
+  DOCUMENTARY:      99,
+  DRAMA:            18,
+  KIDS:             10762,
+  MYSTERY:          9648,
+  SCIFI_FANTASY:    10765,
+  REALITY:          10764,
+  SOAP:             10766,
+  WESTERN:          37,
+}
+
+export interface Genre {
+  id: number
+  name: string
 }
 
 // ── Fonctions de récupération ──
@@ -208,6 +230,74 @@ export async function searchMulti(query: string): Promise<Movie[]> {
     params: { query },
   })
   return data.results.filter((r) => r.media_type !== 'person')
+}
+
+/**
+ * Films populaires du moment
+ */
+export async function getPopularMovies(): Promise<Movie[]> {
+  const { data } = await tmdb.get<TMDBResponse<Movie>>('/movie/popular')
+  return data.results
+}
+
+/**
+ * Séries TV populaires
+ */
+export async function getPopularTV(): Promise<Movie[]> {
+  const { data } = await tmdb.get<TMDBResponse<Movie>>('/tv/popular')
+  return data.results
+}
+
+/**
+ * Séries TV les mieux notées
+ */
+export async function getTopRatedTV(): Promise<Movie[]> {
+  const { data } = await tmdb.get<TMDBResponse<Movie>>('/tv/top_rated')
+  return data.results
+}
+
+/**
+ * Séries TV en cours de diffusion
+ */
+export async function getOnAirTV(): Promise<Movie[]> {
+  const { data } = await tmdb.get<TMDBResponse<Movie>>('/tv/on_the_air')
+  return data.results
+}
+
+/**
+ * Séries TV par genre
+ */
+export async function getTVByGenre(genreId: number): Promise<Movie[]> {
+  const { data } = await tmdb.get<TMDBResponse<Movie>>('/discover/tv', {
+    params: { with_genres: genreId, sort_by: 'popularity.desc' },
+  })
+  return data.results
+}
+
+/**
+ * Films par page (pour la pagination)
+ */
+export async function getMoviesByPage(page = 1): Promise<Movie[]> {
+  const { data } = await tmdb.get<TMDBResponse<Movie>>('/movie/popular', {
+    params: { page },
+  })
+  return data.results
+}
+
+/**
+ * Liste des genres disponibles (films)
+ */
+export async function getMovieGenres(): Promise<Genre[]> {
+  const { data } = await tmdb.get<{ genres: Genre[] }>('/genre/movie/list')
+  return data.genres
+}
+
+/**
+ * Liste des genres disponibles (séries)
+ */
+export async function getTVGenres(): Promise<Genre[]> {
+  const { data } = await tmdb.get<{ genres: Genre[] }>('/genre/tv/list')
+  return data.genres
 }
 
 /**
