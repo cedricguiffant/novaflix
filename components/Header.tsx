@@ -21,6 +21,7 @@ const NAV_LINKS = [
   { label: 'Accueil',    href: '/' },
   { label: 'Séries',     href: '/series' },
   { label: 'Films',      href: '/films' },
+  { label: 'Anime',      href: '/anime' },
   { label: 'Nouveautés', href: '/new' },
   { label: 'Ma liste',   href: '/watchlist' },
 ]
