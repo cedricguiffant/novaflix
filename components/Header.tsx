@@ -239,13 +239,21 @@ export default function Header() {
               </div>
             </>
           ) : (
-            /* ── Bouton Se connecter (user non connecté ou Firebase absent) ── */
-            <Link
-              href="/login"
-              className="btn-nova py-2 px-4 text-sm"
-            >
-              <span>Se connecter</span>
-            </Link>
+            /* ── Boutons Se connecter + S'inscrire ── */
+            <div className="flex items-center gap-2">
+              <Link
+                href="/login"
+                className="btn-ghost py-2 px-4 text-sm hidden sm:inline-flex"
+              >
+                Se connecter
+              </Link>
+              <Link
+                href="/register"
+                className="btn-nova py-2 px-4 text-sm"
+              >
+                <span>S&apos;inscrire</span>
+              </Link>
+            </div>
           )}
         </div>
       </div>
@@ -271,13 +279,22 @@ export default function Header() {
                 </Link>
               ))}
               {!user && (
-                <Link
-                  href="/login"
-                  className="mt-2 btn-nova py-2 px-4 text-sm justify-center"
-                  onClick={() => setMobileNavOpen(false)}
-                >
-                  <span>Se connecter</span>
-                </Link>
+                <div className="flex flex-col gap-2 mt-2">
+                  <Link
+                    href="/login"
+                    className="btn-ghost py-2 px-4 text-sm justify-center"
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    Se connecter
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="btn-nova py-2 px-4 text-sm justify-center"
+                    onClick={() => setMobileNavOpen(false)}
+                  >
+                    <span>S&apos;inscrire</span>
+                  </Link>
+                </div>
               )}
             </div>
           </motion.nav>
