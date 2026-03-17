@@ -1,0 +1,153 @@
+/* globals.css — Styles globaux NovaFlix */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Variables CSS custom ── */
+:root {
+  --nova-bg: #0A0A0A;
+  --nova-primary: #7C3AED;
+  --nova-secondary: #00F5FF;
+  --nova-card: #141414;
+  --nova-border: #1F1F1F;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A1AA;
+}
+
+/* ── Reset & base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--nova-bg);
+  color: var(--text-primary);
+  font-family: var(--font-inter), 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar personnalisée (dark + violet) ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #7C3AED;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9B59FC;
+}
+
+/* ── Classe utilitaire dégradé texte NovaFlix ── */
+.gradient-text {
+  background: linear-gradient(90deg, #7C3AED, #00F5FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glassmorphism ── */
+.glass {
+  background: rgba(20, 20, 20, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+.glass-strong {
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+/* ── Bouton primaire NovaFlix ── */
+.btn-nova {
+  @apply relative inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all duration-300 overflow-hidden;
+  background: linear-gradient(135deg, #7C3AED 0%, #00F5FF 100%);
+}
+
+.btn-nova::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #9B59FC 0%, #33F7FF 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-nova:hover::before {
+  opacity: 1;
+}
+
+.btn-nova span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Bouton secondaire ── */
+.btn-ghost {
+  @apply inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-white transition-all duration-300;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+}
+
+/* ── Scroll horizontal sans barre de défilement ── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Ligne de séparation dégradée ── */
+.divider-nova {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #7C3AED 50%, transparent);
+  opacity: 0.4;
+}
+
+/* ── Overlay gradient pour les images ── */
+.img-overlay {
+  background: linear-gradient(
+    to right,
+    #0A0A0A 30%,
+    rgba(10, 10, 10, 0.7) 60%,
+    transparent 100%
+  ),
+  linear-gradient(
+    to top,
+    #0A0A0A 0%,
+    transparent 60%
+  );
+}
+
+/* ── Anneau actif pour les inputs ── */
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #7C3AED !important;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3);
+}
