@@ -234,27 +234,81 @@ function AnimeRow({
   onSelect: (a: Anime) => void
   showRank?: boolean
 }) {
+  const rowRef = useRef<HTMLDivElement>(null)
+  const [showLeft, setShowLeft]   = useState(false)
+  const [showRight, setShowRight] = useState(true)
+
+  const updateArrows = useCallback(() => {
+    const el = rowRef.current
+    if (!el) return
+    setShowLeft(el.scrollLeft > 10)
+    setShowRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 10)
+  }, [])
+
+  const scroll = useCallback((dir: 'left' | 'right') => {
+    const el = rowRef.current
+    if (!el) return
+    el.scrollBy({ left: dir === 'right' ? el.clientWidth * 0.8 : -el.clientWidth * 0.8, behavior: 'smooth' })
+    setTimeout(updateArrows, 400)
+  }, [updateArrows])
+
   if (!animes.length) return null
 
   return (
     <section className="space-y-3">
+      {/* En-tête */}
       <div className="flex items-center gap-3 px-6 sm:px-8 lg:px-12">
         <div className={`w-1 h-5 rounded-full ${
           accentColor === 'cyan' ? 'bg-nova-secondary shadow-cyan' : 'bg-nova-primary shadow-nova'
         }`} />
         <h2 className="text-base font-bold text-white">{title}</h2>
         <div className="flex-1 h-px bg-gradient-to-r from-nova-border to-transparent ml-2" />
+        <span className="text-xs text-text-muted font-medium hidden sm:block">{animes.length} titres</span>
       </div>
-      <div className="flex gap-3 overflow-x-auto scrollbar-hide px-6 sm:px-8 lg:px-12 pb-2">
-        {animes.map((anime, i) => (
-          <AnimeCard
-            key={`${title}-${i}-${anime.mal_id}`}
-            anime={anime}
-            onSelect={onSelect}
-            index={i}
-            showRank={showRank}
-          />
-        ))}
+
+      {/* Zone scroll */}
+      <div className="relative">
+        {/* Fades bords */}
+        {showLeft  && <div className="absolute left-0  top-0 bottom-0 w-16 bg-gradient-to-r from-nova-bg to-transparent z-10 pointer-events-none" />}
+        {showRight && <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-nova-bg to-transparent z-10 pointer-events-none" />}
+
+        {/* Flèche gauche */}
+        {showLeft && (
+          <motion.button
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => scroll('left')}
+            className="absolute left-2 top-1/2 -translate-y-6 z-20 w-9 h-9 glass rounded-full flex items-center justify-center text-white hover:bg-nova-primary/30 hover:border-nova-primary/40 transition-all duration-200 shadow-card"
+            aria-label="Défiler à gauche"
+          >
+            <FiChevronLeft size={18} />
+          </motion.button>
+        )}
+
+        {/* Flèche droite */}
+        {showRight && (
+          <motion.button
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            onClick={() => scroll('right')}
+            className="absolute right-2 top-1/2 -translate-y-6 z-20 w-9 h-9 glass rounded-full flex items-center justify-center text-white hover:bg-nova-primary/30 hover:border-nova-primary/40 transition-all duration-200 shadow-card"
+            aria-label="Défiler à droite"
+          >
+            <FiChevronRight size={18} />
+          </motion.button>
+        )}
+
+        {/* Conteneur scroll */}
+        <div
+          ref={rowRef}
+          onScroll={updateArrows}
+          className="flex gap-3 overflow-x-auto scrollbar-hide px-6 sm:px-8 lg:px-12 pb-2"
+          style={{ scrollSnapType: 'x mandatory' }}
+        >
+          {animes.map((anime, i) => (
+            <div key={`${title}-${i}-${anime.mal_id}`} style={{ scrollSnapAlign: 'start' }}>
+              <AnimeCard anime={anime} onSelect={onSelect} index={i} showRank={showRank} />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
