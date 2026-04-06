@@ -248,7 +248,7 @@ function AnimeRow({
       <div className="flex gap-3 overflow-x-auto scrollbar-hide px-6 sm:px-8 lg:px-12 pb-2">
         {animes.map((anime, i) => (
           <AnimeCard
-            key={anime.mal_id}
+            key={`${title}-${anime.mal_id}`}
             anime={anime}
             onSelect={onSelect}
             index={i}
@@ -412,7 +412,7 @@ export default function AnimeBrowsePage({
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9 gap-3">
                     {gridAnimes.map((anime, i) => (
                       <AnimeCard
-                        key={anime.mal_id}
+                        key={`grid-${i}-${anime.mal_id}`}
                         anime={anime}
                         onSelect={setSelectedAnime}
                         index={i}
