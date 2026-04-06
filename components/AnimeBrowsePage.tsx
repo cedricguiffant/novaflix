@@ -3,7 +3,7 @@
 
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiFilter, FiPlay, FiPlus, FiStar, FiTv, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import Header from '@/components/Header'
@@ -273,6 +273,36 @@ export default function AnimeBrowsePage({
   const [activeGenre, setActiveGenre]     = useState<number | null>(null)
   const [viewMode, setViewMode]           = useState<'rows' | 'grid'>('rows')
 
+  // Scroll horizontal du menu genres
+  const genreScrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft]   = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+
+  const updateScrollState = useCallback(() => {
+    const el = genreScrollRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 8)
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 8)
+  }, [])
+
+  useEffect(() => {
+    const el = genreScrollRef.current
+    if (!el) return
+    updateScrollState()
+    el.addEventListener('scroll', updateScrollState, { passive: true })
+    window.addEventListener('resize', updateScrollState)
+    return () => {
+      el.removeEventListener('scroll', updateScrollState)
+      window.removeEventListener('resize', updateScrollState)
+    }
+  }, [updateScrollState])
+
+  const scrollGenres = useCallback((dir: 'left' | 'right') => {
+    const el = genreScrollRef.current
+    if (!el) return
+    el.scrollBy({ left: dir === 'right' ? 200 : -200, behavior: 'smooth' })
+  }, [])
+
   // Genres disponibles (avec contenu)
   const availableGenres = useMemo(
     () => genreSections.filter((s) => s.animes.length > 0).map((s) => s.genre),
@@ -338,32 +368,82 @@ export default function AnimeBrowsePage({
               </div>
             </div>
 
-            {/* Filtres genres */}
+            {/* Filtres genres avec défilement horizontal */}
             {availableGenres.length > 0 && (
-              <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
-                <button
-                  onClick={() => setActiveGenre(null)}
-                  className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
-                    activeGenre === null
-                      ? 'bg-nova-gradient text-white shadow-nova'
-                      : 'glass border border-nova-border text-text-secondary hover:text-white hover:border-nova-primary/40'
-                  }`}
+              <div className="relative">
+                {/* Flèche gauche */}
+                <AnimatePresence>
+                  {canScrollLeft && (
+                    <motion.button
+                      key="scroll-left"
+                      initial={{ opacity: 0, x: -6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -6 }}
+                      transition={{ duration: 0.15 }}
+                      onClick={() => scrollGenres('left')}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full glass border border-nova-border flex items-center justify-center text-text-secondary hover:text-white hover:border-nova-primary/60 transition-colors shadow-lg"
+                      style={{ marginTop: '-4px' }}
+                    >
+                      <FiChevronLeft size={16} />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+
+                {/* Flèche droite */}
+                <AnimatePresence>
+                  {canScrollRight && (
+                    <motion.button
+                      key="scroll-right"
+                      initial={{ opacity: 0, x: 6 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 6 }}
+                      transition={{ duration: 0.15 }}
+                      onClick={() => scrollGenres('right')}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full glass border border-nova-border flex items-center justify-center text-text-secondary hover:text-white hover:border-nova-primary/60 transition-colors shadow-lg"
+                      style={{ marginTop: '-4px' }}
+                    >
+                      <FiChevronRight size={16} />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
+
+                {/* Dégradés de fondu sur les bords */}
+                {canScrollLeft && (
+                  <div className="absolute left-0 top-0 h-full w-12 bg-gradient-to-r from-nova-bg to-transparent pointer-events-none z-[5]" />
+                )}
+                {canScrollRight && (
+                  <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-nova-bg to-transparent pointer-events-none z-[5]" />
+                )}
+
+                {/* Barre de pills */}
+                <div
+                  ref={genreScrollRef}
+                  className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 px-1"
                 >
-                  Tous
-                </button>
-                {availableGenres.map((genre) => (
                   <button
-                    key={genre.mal_id}
-                    onClick={() => setActiveGenre(genre.mal_id === activeGenre ? null : genre.mal_id)}
+                    onClick={() => setActiveGenre(null)}
                     className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
-                      activeGenre === genre.mal_id
+                      activeGenre === null
                         ? 'bg-nova-gradient text-white shadow-nova'
                         : 'glass border border-nova-border text-text-secondary hover:text-white hover:border-nova-primary/40'
                     }`}
                   >
-                    {genre.name}
+                    Tous
                   </button>
-                ))}
+                  {availableGenres.map((genre) => (
+                    <button
+                      key={genre.mal_id}
+                      onClick={() => setActiveGenre(genre.mal_id === activeGenre ? null : genre.mal_id)}
+                      className={`flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+                        activeGenre === genre.mal_id
+                          ? 'bg-nova-gradient text-white shadow-nova'
+                          : 'glass border border-nova-border text-text-secondary hover:text-white hover:border-nova-primary/40'
+                      }`}
+                    >
+                      {genre.name}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </div>
