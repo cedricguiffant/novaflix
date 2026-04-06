@@ -248,7 +248,7 @@ function AnimeRow({
       <div className="flex gap-3 overflow-x-auto scrollbar-hide px-6 sm:px-8 lg:px-12 pb-2">
         {animes.map((anime, i) => (
           <AnimeCard
-            key={`${title}-${anime.mal_id}`}
+            key={`${title}-${i}-${anime.mal_id}`}
             anime={anime}
             onSelect={onSelect}
             index={i}

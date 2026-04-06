@@ -406,7 +406,7 @@ function EpisodesTab({
         <FiAlertCircle size={32} className="text-text-muted mx-auto mb-3" />
         <p className="text-text-secondary text-sm font-medium mb-1">Non disponible</p>
         <p className="text-text-muted text-xs mb-4">
-          Cet anime n&apos;a pas été trouvé sur anime-sama.pw
+          Cet anime n&apos;a pas été trouvé sur anime-sama.to
         </p>
         <button onClick={onRetry} className="btn-ghost text-xs px-4 py-2 flex items-center gap-1.5 mx-auto">
           <FiRefreshCw size={12} /> Réessayer
